@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEIC 800 Vocabulary Mastery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+            animation: fadeIn 1s ease-in;
+        }
+
+        h1 {
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .category-btn {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border: 2px solid transparent;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-btn:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .category-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .word-count {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .flashcard {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.3s;
+            position: relative;
+        }
+
+        .flashcard:hover {
+            transform: scale(1.02);
+        }
+
+        .flashcard.flipped .front {
+            display: none;
+        }
+
+        .flashcard.flipped .back {
+            display: block;
+        }
+
+        .front, .back {
+            text-align: center;
+            width: 100%;
+        }
+
+        .back {
+            display: none;
+        }
+
+        .word {
+            font-size: 3em;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .pronunciation {
+            font-size: 1.5em;
+            color: #888;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .definition {
+            font-size: 1.5em;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .example {
+            font-size: 1.2em;
+            color: #555;
+            font-style: italic;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .progress-section {
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.5s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .flip-hint {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.9em;
+            color: #999;
+            animation: pulse 2s infinite;
+        }
+
+        .quiz-option {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            font-size: 1.1em;
+        }
+
+        .quiz-option:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+
+        .quiz-option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .quiz-option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .quiz-question {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .word-list-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .word-list-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+        }
+
+        .word-list-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .word-list-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .word-list-container {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .learned-badge {
+            background: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .score-display {
+            text-align: center;
+            font-size: 2em;
+            color: #667eea;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 TOEIC 800 Vocabulary Mastery</h1>
+            <p class="subtitle">Master 200+ Essential Words for Success</p>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('flashcard')">🎴 Flashcards</button>
+            <button class="tab-btn" onclick="switchTab('wordlist')">📋 Word List</button>
+            <button class="tab-btn" onclick="switchTab('quiz')">✍️ Quiz Test</button>
+            <button class="tab-btn" onclick="switchTab('stats')">📊 Statistics</button>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-number" id="totalWords">0</div>
+                <div class="stat-label">Total Words</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="learnedWords">0</div>
+                <div class="stat-label">Words Learned</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayWords">0</div>
+                <div class="stat-label">Studied Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="quizScore">0%</div>
+                <div class="stat-label">Quiz Accuracy</div>
+            </div>
+        </div>
+
+        <!-- Flashcard Tab -->
+        <div id="flashcard" class="tab-content active">
+            <div class="main-content">
+                <div class="sidebar">
+                    <div class="card">
+                        <h2>Categories</h2>
+                        <div class="category-list">
+                            <button class="category-btn active" onclick="selectCategory('business')">
+                                <span>💼 Business & Office</span>
+                                <span class="word-count">25 words</span>
+                            </button>
+                            <button class="category-btn" onclick="selectCategory('finance')">
+                                <span>💰 Finance & Banking</span>
+                                <span class="word-count">30 words</span>
+                            </button>
+                            <button class="category-btn" onclick="selectCategory('travel')">
+                                <span>✈️ Travel & Transportation</span>
+                                <span class="word-count">25 words</span>
+                            </button>
+                            <button class="category-btn" onclick="selectCategory('technology')">
+                                <span>💻 Technology & IT</span>
+                                <span class="word-count">25 words</span>
+                            </button>
+                            <button class="category-btn" onclick="selectCategory('marketing')">
+                                <span>📊 Marketing & Sales</span>
+                                <span class="word-count">25 words</span>
+                            </button>
+                            <button class="category-btn" onclick="selectCategory('management')">
+                                <span>👔 Management & HR</span>
+                                <span class="word-count">25 words</span>
+                            </button>
+                            <button class="category-btn" onclick="selectCategory('daily')">
+                                <span>🏠 Daily Life</span>
+                                <span class="word-count">25 words</span>
+                            </button>
+                            <button class="category-btn" onclick="selectCategory('academic')">
+                                <span>🎓 Academic & Research</span>
+                                <span class="word-count">25 words</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2>Learning Progress</h2>
+                        <div class="progress-section">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="categoryProgress">0%</div>
+                            </div>
+                            <p id="progressText">Start learning to track progress!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="flashcard" id="flashcard" onclick="flipCard()">
+                        <div class="front">
+                            <div class="word" id="wordFront">Click "Next Word" to Start</div>
+                        </div>
+                        <div class="back">
+                            <div class="pronunciation" id="pronunciation"></div>
+                            <div class="definition" id="definition"></div>
+                            <div class="example" id="example"></div>
+                        </div>
+                        <div class="flip-hint">👆 Click to flip card</div>
+                    </div>
+
+                    <div class="controls">
+                        <button onclick="previousWord()">⬅️ Previous</button>
+                        <button onclick="markAsLearned()" class="btn-success">✓ I Know This</button>
+                        <button onclick="nextWord()">Next Word ➡️</button>
+                        <button onclick="shuffleWords()" class="btn-secondary">🔀 Shuffle</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Word List Tab -->
+        <div id="wordlist" class="tab-content">
+            <div class="card">
+                <h2>📋 Complete Word List</h2>
+                <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search words..." onkeyup="filterWords()">
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterByStatus('all')">All Words</button>
+                    <button class="filter-btn" onclick="filterByStatus('learned')">Learned</button>
+                    <button class="filter-btn" onclick="filterByStatus('unlearned')">Not Learned</button>
+                </div>
+
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterByCategory('all')">All Categories</button>
+                    <button class="filter-btn" onclick="filterByCategory('business')">Business</button>
+                    <button class="filter-btn" onclick="filterByCategory('finance')">Finance</button>
+                    <button class="filter-btn" onclick="filterByCategory('travel')">Travel</button>
+                    <button class="filter-btn" onclick="filterByCategory('technology')">Technology</button>
+                    <button class="filter-btn" onclick="filterByCategory('marketing')">Marketing</button>
+                    <button class="filter-btn" onclick="filterByCategory('management')">Management</button>
+                    <button class="filter-btn" onclick="filterByCategory('daily')">Daily</button>
+                    <button class="filter-btn" onclick="filterByCategory('academic')">Academic</button>
+                </div>
+
+                <div class="word-list-container">
+                    <table class="word-list-table" id="wordTable">
+                        <thead>
+                            <tr>
+                                <th>Word</th>
+                                <th>Pronunciation</th>
+                                <th>Definition</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wordTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Tab -->
+        <div id="quiz" class="tab-content">
+            <div class="card">
+                <h2>✍️ Vocabulary Quiz</h2>
+                <div class="score-display" id="quizScoreDisplay">Score: 0/0</div>
+                <div id="quizContent">
+                    <div style="text-align: center; padding: 50px;">
+                        <p style="font-size: 1.5em; color: #666; margin-bottom: 30px;">Ready to test your vocabulary?</p>
+                        <button onclick="startQuiz()" style="font-size: 1.2em; padding: 20px 40px;">Start Quiz</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Tab -->
+        <div id="stats" class="tab-content">
+            <div class="card">
+                <h2>📊 Your Learning Statistics</h2>
+                <div id="statsContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const vocabularyData = {
+            business: [
+                { word: "accept", pronunciation: "/əkˈsept/", definition: "to agree to receive or take", example: "We accept all major credit cards." },
+                { word: "accomplish", pronunciation: "/əˈkʌmplɪʃ/", definition: "to succeed in doing something", example: "We accomplished all our goals this quarter." },
+                { word: "achievement", pronunciation: "/əˈtʃiːvmənt/", definition: "something done successfully", example: "Winning the award was a great achievement." },
+                { word: "acquire", pronunciation: "/əˈkwaɪə/", definition: "to obtain or get", example: "The company acquired new equipment." },
+                { word: "attend", pronunciation: "/əˈtend/", definition: "to be present at", example: "All staff must attend the meeting." },
+                { word: "benefit", pronunciation: "/ˈbenɪfɪt/", definition: "an advantage or profit", example: "Employee benefits include health insurance." },
+                { word: "clientele", pronunciation: "/ˌkliːɑːnˈtel/", definition: "customers or clients collectively", example: "We have a loyal clientele." },
+                { word: "collaborate", pronunciation: "/kəˈlæbəreɪt/", definition: "to work together", example: "Our teams collaborate on projects." },
+                { word: "complimentary", pronunciation: "/ˌkɒmplɪˈmentəri/", definition: "given free as a courtesy", example: "Breakfast is complimentary for hotel guests." },
+                { word: "confirm", pronunciation: "/kənˈfɜːm/", definition: "to verify or establish the truth", example: "Please confirm your attendance." },
+                { word: "consolidate", pronunciation: "/kənˈsɒlɪdeɪt/", definition: "to combine into a single unit", example: "We will consolidate all departments." },
+                { word: "coordinate", pronunciation: "/kəʊˈɔːdɪneɪt/", definition: "to organize activities together", example: "I coordinate the marketing efforts." },
+                { word: "delegate", pronunciation: "/ˈdelɪɡeɪt/", definition: "to assign responsibility to others", example: "Managers must delegate tasks." },
+                { word: "establish", pronunciation: "/ɪˈstæblɪʃ/", definition: "to set up or create", example: "The company was established in 1990." },
+                { word: "exceed", pronunciation: "/ɪkˈsiːd/", definition: "to go beyond a limit", example: "Sales exceeded our expectations." },
+                { word: "facilitate", pronunciation: "/fəˈsɪlɪteɪt/", definition: "to make easier", example: "Technology facilitates communication." },
+                { word: "generate", pronunciation: "/ˈdʒenəreɪt/", definition: "to produce or create", example: "We need to generate more revenue." },
+                { word: "implement", pronunciation: "/ˈɪmplɪment/", definition: "to put into effect", example: "We will implement new procedures." },
+                { word: "negotiate", pronunciation: "/nɪˈɡəʊʃieɪt/", definition: "to discuss to reach agreement", example: "We negotiated a better contract." },
+                { word: "proposal", pronunciation: "/prəˈpəʊzl/", definition: "a plan or suggestion", example: "Submit your proposal by Friday." },
+                { word: "require", pronunciation: "/rɪˈkwaɪə/", definition: "to need or demand", example: "This job requires experience." },
+                { word: "schedule", pronunciation: "/ˈʃedjuːl/", definition: "a plan showing times", example: "Check the schedule for meetings." },
+                { word: "submit", pronunciation: "/səbˈmɪt/", definition: "to present for consideration", example: "Please submit your report today." },
+                { word: "undertake", pronunciation: "/ˌʌndəˈteɪk/", definition: "to commit to doing", example: "We will undertake this project." },
+                { word: "verify", pronunciation: "/ˈverɪfaɪ/", definition: "to check accuracy", example: "Please verify the information." }
+            ],
+            finance: [
+                { word: "account", pronunciation: "/əˈkaʊnt/", definition: "a record of financial transactions", example: "Open a savings account at the bank." },
+                { word: "allocate", pronunciation: "/ˈæləkeɪt/", definition: "to distribute for a purpose", example: "We allocate funds to each department." },
+                { word: "asset", pronunciation: "/ˈæset/", definition: "something valuable owned", example: "Real estate is a valuable asset." },
+                { word: "audit", pronunciation: "/ˈɔːdɪt/", definition: "an official financial examination", example: "The audit will begin next week." },
+                { word: "balance", pronunciation: "/ˈbæləns/", definition: "the amount of money in an account", example: "Check your account balance regularly." },
+                { word: "budget", pronunciation: "/ˈbʌdʒɪt/", definition: "a financial plan", example: "We need to stay within budget." },
+                { word: "capital", pronunciation: "/ˈkæpɪtl/", definition: "money used to start a business", example: "The company needs more capital." },
+                { word: "credit", pronunciation: "/ˈkredɪt/", definition: "borrowed money to be repaid", example: "She has good credit history." },
+                { word: "debt", pronunciation: "/det/", definition: "money owed", example: "The company reduced its debt." },
+                { word: "deposit", pronunciation: "/dɪˈpɒzɪt/", definition: "money put into a bank account", example: "Make a deposit before Friday." },
+                { word: "dividend", pronunciation: "/ˈdɪvɪdend/", definition: "payment to shareholders", example: "Shareholders receive annual dividends." },
+                { word: "earnings", pronunciation: "/ˈɜːnɪŋz/", definition: "money received from work", example: "Quarterly earnings were strong." },
+                { word: "estimate", pronunciation: "/ˈestɪmət/", definition: "an approximate calculation", example: "Get an estimate before starting." },
+                { word: "expenditure", pronunciation: "/ɪkˈspendɪtʃə/", definition: "money spent", example: "Reduce unnecessary expenditure." },
+                { word: "fiscal", pronunciation: "/ˈfɪskl/", definition: "relating to government revenue", example: "The fiscal year ends in March." },
+                { word: "forecast", pronunciation: "/ˈfɔːkɑːst/", definition: "a prediction of future trends", example: "The forecast shows growth." },
+                { word: "funds", pronunciation: "/fʌndz/", definition: "money available for use", example: "We have sufficient funds." },
+                { word: "income", pronunciation: "/ˈɪnkʌm/", definition: "money received regularly", example: "Her income increased this year." },
+                { word: "interest", pronunciation: "/ˈɪntrəst/", definition: "money paid for borrowing", example: "The interest rate is 3%." },
+                { word: "invest", pronunciation: "/ɪnˈvest/", definition: "to put money into something", example: "Invest in stocks carefully." },
+                { word: "invoice", pronunciation: "/ˈɪnvɔɪs/", definition: "a bill for goods or services", example: "Send the invoice to accounting." },
+                { word: "liability", pronunciation: "/ˌlaɪəˈbɪləti/", definition: "money owed", example: "The company has few liabilities." },
+                { word: "loan", pronunciation: "/ləʊn/", definition: "borrowed money", example: "Apply for a business loan." },
+                { word: "profit", pronunciation: "/ˈprɒfɪt/", definition: "money gained", example: "The company made a profit." },
+                { word: "refund", pronunciation: "/ˈriːfʌnd/", definition: "money given back", example: "Request a refund within 30 days." },
+                { word: "revenue", pronunciation: "/ˈrevənjuː/", definition: "income from business", example: "Revenue increased by 15%." },
+                { word: "savings", pronunciation: "/ˈseɪvɪŋz/", definition: "money saved", example: "Build your savings account." },
+                { word: "stock", pronunciation: "/stɒk/", definition: "shares in a company", example: "Buy stock in tech companies." },
+                { word: "transaction", pronunciation: "/trænˈzækʃn/", definition: "a business deal", example: "All transactions are recorded." },
+                { word: "withdrawal", pronunciation: "/wɪðˈdrɔːəl/", definition: "taking money out", example: "Make a withdrawal at the ATM." }
+            ],
+            travel: [
+                { word: "accommodation", pronunciation: "/əˌkɒməˈdeɪʃn/", definition: "a place to stay", example: "Book accommodation in advance." },
+                { word: "arrival", pronunciation: "/əˈraɪvl/", definition: "the act of reaching a place", example: "The arrival time is 3 PM." },
+                { word: "baggage", pronunciation: "/ˈbæɡɪdʒ/", definition: "suitcases and bags", example: "Collect your baggage at carousel 5." },
+                { word: "board", pronunciation: "/bɔːd/", definition: "to get on a vehicle", example: "Please board the plane now." },
+                { word: "boarding pass", pronunciation: "/ˈbɔːdɪŋ pɑːs/", definition: "a ticket to board a plane", example: "Show your boarding pass at the gate." },
+                { word: "booking", pronunciation: "/ˈbʊkɪŋ/", definition: "a reservation", example: "Confirm your booking online." },
+                { word: "cancellation", pronunciation: "/ˌkænsəˈleɪʃn/", definition: "the act of canceling", example: "There is no cancellation fee." },
+                { word: "delay", pronunciation: "/dɪˈleɪ/", definition: "a postponement", example: "The flight has a two-hour delay." },
+                { word: "departure", pronunciation: "/dɪˈpɑːtʃə/", definition: "leaving a place", example: "Departure is at 9 AM." },
+                { word: "destination", pronunciation: "/ˌdestɪˈneɪʃn/", definition: "the place traveling to", example: "What is your final destination?" },
+                { word: "excursion", pronunciation: "/ɪkˈskɜːʃn/", definition: "a short journey for pleasure", example: "Join our city excursion." },
+                { word: "fare", pronunciation: "/feə/", definition: "the price of travel", example: "The bus fare is two dollars." },
+                { word: "gateway", pronunciation: "/ˈɡeɪtweɪ/", definition: "an entrance or access point", example: "Proceed to gateway 12." },
+                { word: "itinerary", pronunciation: "/aɪˈtɪnərəri/", definition: "a travel plan", example: "Review your travel itinerary." },
+                { word: "luggage", pronunciation: "/ˈlʌɡɪdʒ/", definition: "bags and suitcases", example: "Check in your luggage here." },
+                { word: "passenger", pronunciation: "/ˈpæsɪndʒə/", definition: "a traveler", example: "All passengers must have tickets." },
+                { word: "passport", pronunciation: "/ˈpɑːspɔːt/", definition: "travel document", example: "Show your passport at immigration." },
+                { word: "reservation", pronunciation: "/ˌrezəˈveɪʃn/", definition: "a booking", example: "Make a hotel reservation." },
+                { word: "route", pronunciation: "/ruːt/", definition: "a way to get somewhere", example: "Take the fastest route." },
+                { word: "terminal", pronunciation: "/ˈtɜːmɪnl/", definition: "a station building", example: "Go to Terminal 2." },
+                { word: "ticket", pronunciation: "/ˈtɪkɪt/", definition: "proof of payment for travel", example: "Purchase your ticket online." },
+                { word: "transit", pronunciation: "/ˈtrænzɪt/", definition: "passing through", example: "Passengers in transit wait here." },
+                { word: "traveler", pronunciation: "/ˈtrævələ/", definition: "someone who travels", example: "The traveler visited many countries." },
+                { word: "trip", pronunciation: "/trɪp/", definition: "a journey", example: "Have a safe trip!" },
+                { word: "voyage", pronunciation: "/ˈvɔɪɪdʒ/", definition: "a long journey", example: "The voyage lasted two weeks." }
+            ],
+            technology: [
+                { word: "access", pronunciation: "/ˈækses/", definition: "the ability to use or enter", example: "You need a password for access." },
+                { word: "application", pronunciation: "/ˌæplɪˈkeɪʃn/", definition: "a software program", example: "Download the mobile application." },
+                { word: "backup", pronunciation: "/ˈbækʌp/", definition: "a copy of data", example: "Make regular backups of files." },
+                { word: "browse", pronunciation: "/braʊz/", definition: "to look through casually", example: "Browse our website for products." },
+                { word: "compatible", pronunciation: "/kəmˈpætəbl/", definition: "able to work together", example: "This software is compatible with Windows." },
+                { word: "configure", pronunciation: "/kənˈfɪɡə/", definition: "to set up", example: "Configure the system settings." },
+                { word: "crash", pronunciation: "/kræʃ/", definition: "sudden system failure", example: "The computer crashed unexpectedly." },
+                { word: "database", pronunciation: "/ˈdeɪtəbeɪs/", definition: "organized collection of data", example: "Store customer info in the database." },
+                { word: "device", pronunciation: "/dɪˈvaɪs/", definition: "a piece of equipment", example: "Connect your device to WiFi." },
+                { word: "digital", pronunciation: "/ˈdɪdʒɪtl/", definition: "using computer technology", example: "We use digital marketing." },
+                { word: "download", pronunciation: "/ˌdaʊnˈləʊd/", definition: "to transfer data to a device", example: "Download the latest version." },
+                { word: "encrypt", pronunciation: "/ɪnˈkrɪpt/", definition: "to convert into code", example: "Encrypt sensitive data." },
+                { word: "hardware", pronunciation: "/ˈhɑːdweə/", definition: "physical computer equipment", example: "Upgrade the hardware components." },
+                { word: "install", pronunciation: "/ɪnˈstɔːl/", definition: "to set up software", example: "Install the security update." },
+                { word: "integrate", pronunciation: "/ˈɪntɪɡreɪt/", definition: "to combine into a whole", example: "Integrate all systems together." },
+                { word: "interface", pronunciation: "/ˈɪntəfeɪs/", definition: "a connection point", example: "The user interface is intuitive." },
+                { word: "network", pronunciation: "/ˈnetwɜːk/", definition: "connected computers", example: "Connect to the office network." },
+                { word: "operating system", pronunciation: "/ˈɒpəreɪtɪŋ ˈsɪstəm/", definition: "main computer software", example: "Update your operating system." },
+                { word: "password", pronunciation: "/ˈpɑːswɜːd/", definition: "a secret code", example: "Change your password monthly." },
+                { word: "software", pronunciation: "/ˈsɒftweə/", definition: "computer programs", example: "Install the latest software." },
+                { word: "storage", pronunciation: "/ˈstɔːrɪdʒ/", definition: "space for saving data", example: "We need more storage space." },
+                { word: "update", pronunciation: "/ˌʌpˈdeɪt/", definition: "to make current", example: "Update the software regularly." },
+                { word: "upload", pronunciation: "/ˌʌpˈləʊd/", definition: "to transfer data online", example: "Upload the documents to the cloud." },
+                { word: "virus", pronunciation: "/ˈvaɪrəs/", definition: "malicious software", example: "Install antivirus protection." },
+                { word: "wireless", pronunciation: "/ˈwaɪələs/", definition: "without physical connection", example: "Connect via wireless network." }
+            ],
+            marketing: [
+                { word: "advertise", pronunciation: "/ˈædvətaɪz/", definition: "to promote publicly", example: "We advertise on social media." },
+                { word: "audience", pronunciation: "/ˈɔːdiəns/", definition: "target group", example: "Know your target audience." },
+                { word: "brand", pronunciation: "/brænd/", definition: "a company identity", example: "Build a strong brand image." },
+                { word: "brochure", pronunciation: "/ˈbrəʊʃə/", definition: "an informational booklet", example: "Pick up a brochure at reception." },
+                { word: "campaign", pronunciation: "/kæmˈpeɪn/", definition: "organized promotional activities", example: "Launch the new campaign." },
+                { word: "competitor", pronunciation: "/kəmˈpetɪtə/", definition: "a rival business", example: "Monitor competitor activities." },
+                { word: "consumer", pronunciation: "/kənˈsjuːmə/", definition: "a person who buys", example: "Understand consumer behavior." },
+                { word: "demand", pronunciation: "/dɪˈmɑːnd/", definition: "desire for a product", example: "There is high demand for this." },
+                { word: "demographic", pronunciation: "/ˌdeməˈɡræfɪk/", definition: "population characteristics", example: "Target the right demographic." },
+                { word: "distribution", pronunciation: "/ˌdɪstrɪˈbjuːʃn/", definition: "delivery of products", example: "Improve distribution channels." },
+                { word: "exposure", pronunciation: "/ɪkˈspəʊʒə/", definition: "public visibility", example: "Increase brand exposure." },
+                { word: "launch", pronunciation: "/lɔːntʃ/", definition: "to introduce a product", example: "We launch the product next month." },
+                { word: "logo", pronunciation: "/ˈləʊɡəʊ/", definition: "a company symbol", example: "Design a memorable logo." },
+                { word: "market", pronunciation: "/ˈmɑːkɪt/", definition: "buyers and sellers", example: "Research the market first." },
+                { word: "merchandise", pronunciation: "/ˈmɜːtʃəndaɪz/", definition: "goods for sale", example: "Display merchandise attractively." },
+                { word: "outlet", pronunciation: "/ˈaʊtlet/", definition: "a store or shop", example: "Open a new retail outlet." },
+                { word: "packaging", pronunciation: "/ˈpækɪdʒɪŋ/", definition: "product wrapping", example: "Improve product packaging." },
+                { word: "promote", pronunciation: "/prəˈməʊt/", definition: "to publicize", example: "Promote the sale widely." },
+                { word: "publicity", pronunciation: "/pʌbˈlɪsəti/", definition: "public attention", example: "Generate positive publicity." },
+                { word: "retail", pronunciation: "/ˈriːteɪl/", definition: "selling to consumers", example: "The retail price is higher." },
+                { word: "sales", pronunciation: "/seɪlz/", definition: "selling activities", example: "Sales increased this quarter." },
+                { word: "slogan", pronunciation: "/ˈsləʊɡən/", definition: "a memorable phrase", example: "Create a catchy slogan." },
+                { word: "strategy", pronunciation: "/ˈstrætədʒi/", definition: "a plan of action", example: "Develop a marketing strategy." },
+                { word: "survey", pronunciation: "/ˈsɜːveɪ/", definition: "a questionnaire", example: "Conduct a customer survey." },
+                { word: "target", pronunciation: "/ˈtɑːɡɪt/", definition: "to aim at", example: "Target young professionals." }
+            ],
+            management: [
+                { word: "appoint", pronunciation: "/əˈpɔɪnt/", definition: "to select for a position", example: "Appoint a new manager." },
+                { word: "assign", pronunciation: "/əˈsaɪn/", definition: "to give a task", example: "Assign tasks to team members." },
+                { word: "authority", pronunciation: "/ɔːˈθɒrəti/", definition: "the power to make decisions", example: "He has the authority to approve." },
+                { word: "capability", pronunciation: "/ˌkeɪpəˈbɪləti/", definition: "the ability to do something", example: "Assess employee capabilities." },
+                { word: "conduct", pronunciation: "/kənˈdʌkt/", definition: "to organize and carry out", example: "Conduct performance reviews." },
+                { word: "delegate", pronunciation: "/ˈdelɪɡeɪt/", definition: "to assign authority", example: "Learn to delegate effectively." },
+                { word: "department", pronunciation: "/dɪˈpɑːtmənt/", definition: "a division of an organization", example: "The sales department meets Monday." },
+                { word: "efficient", pronunciation: "/ɪˈfɪʃnt/", definition: "working well", example: "We need more efficient processes." },
+                { word: "employee", pronunciation: "/ɪmˈplɔɪiː/", definition: "a worker", example: "All employees receive training." },
+                { word: "evaluate", pronunciation: "/ɪˈvæljueɪt/", definition: "to assess", example: "Evaluate performance annually." },
+                { word: "executive", pronunciation: "/ɪɡˈzekjʊtɪv/", definition: "a senior manager", example: "The executive team meets weekly." },
+                { word: "hierarchy", pronunciation: "/ˈhaɪərɑːki/", definition: "a ranking system", example: "Understand the company hierarchy." },
+                { word: "initiative", pronunciation: "/ɪˈnɪʃətɪv/", definition: "a new plan", example: "Launch a new initiative." },
+                { word: "mentor", pronunciation: "/ˈmentɔː/", definition: "to guide and advise", example: "Senior staff mentor new hires." },
+                { word: "oversee", pronunciation: "/ˌəʊvəˈsiː/", definition: "to supervise", example: "She oversees all operations." },
+                { word: "personnel", pronunciation: "/ˌpɜːsəˈnel/", definition: "staff or employees", example: "Contact the personnel department." },
+                { word: "policy", pronunciation: "/ˈpɒləsi/", definition: "a rule or guideline", example: "Review the company policy." },
+                { word: "procedure", pronunciation: "/prəˈsiːdʒə/", definition: "an official way of doing something", example: "Follow the safety procedures." },
+                { word: "productivity", pronunciation: "/ˌprɒdʌkˈtɪvəti/", definition: "efficiency in production", example: "Improve team productivity." },
+                { word: "recruit", pronunciation: "/rɪˈkruːt/", definition: "to hire new staff", example: "Recruit talented employees." },
+                { word: "responsibility", pronunciation: "/rɪˌspɒnsəˈbɪləti/", definition: "a duty or obligation", example: "Take responsibility for tasks." },
+                { word: "retain", pronunciation: "/rɪˈteɪn/", definition: "to keep", example: "Retain skilled workers." },
+                { word: "staff", pronunciation: "/stɑːf/", definition: "employees", example: "All staff attend the meeting." },
+                { word: "supervise", pronunciation: "/ˈsuːpəvaɪz/", definition: "to oversee work", example: "Supervise the project team." },
+                { word: "terminate", pronunciation: "/ˈtɜːmɪneɪt/", definition: "to end employment", example: "Terminate the contract early." },
+                { word: "workforce", pronunciation: "/ˈwɜːkfɔːs/", definition: "all employees", example: "Train the entire workforce." }
+            ],
+            daily: [
+                { word: "adjacent", pronunciation: "/əˈdʒeɪsnt/", definition: "next to or adjoining", example: "The hotel is adjacent to the station." },
+                { word: "affordable", pronunciation: "/əˈfɔːdəbl/", definition: "reasonably priced", example: "Find affordable housing options." },
+                { word: "ample", pronunciation: "/ˈæmpl/", definition: "enough or more than enough", example: "There is ample parking space." },
+                { word: "anticipate", pronunciation: "/ænˈtɪsɪpeɪt/", definition: "to expect or predict", example: "We anticipate high attendance." },
+                { word: "arrange", pronunciation: "/əˈreɪndʒ/", definition: "to organize", example: "Arrange a meeting time." },
+                { word: "available", pronunciation: "/əˈveɪləbl/", definition: "ready for use", example: "Rooms are available now." },
+                { word: "comprehensive", pronunciation: "/ˌkɒmprɪˈhensɪv/", definition: "complete and thorough", example: "A comprehensive guide to the city." },
+                { word: "convenient", pronunciation: "/kənˈviːniənt/", definition: "easy to use", example: "The location is very convenient." },
+                { word: "deliver", pronunciation: "/dɪˈlɪvə/", definition: "to bring to a destination", example: "We deliver within 24 hours." },
+                { word: "essential", pronunciation: "/ɪˈsenʃl/", definition: "absolutely necessary", example: "Water is essential for life." },
+                { word: "expire", pronunciation: "/ɪkˈspaɪə/", definition: "to come to an end", example: "Your membership will expire soon." },
+                { word: "inquire", pronunciation: "/ɪnˈkwaɪə/", definition: "to ask for information", example: "Inquire about available services." },
+                { word: "notify", pronunciation: "/ˈnəʊtɪfaɪ/", definition: "to inform", example: "We will notify you by email." },
+                { word: "obtain", pronunciation: "/əbˈteɪn/", definition: "to get or acquire", example: "Obtain permission before starting." },
+                { word: "occasionally", pronunciation: "/əˈkeɪʒnəli/", definition: "sometimes but not often", example: "I occasionally work from home." },
+                { word: "postpone", pronunciation: "/pəˈspəʊn/", definition: "to delay", example: "Postpone the meeting until Monday." },
+                { word: "precise", pronunciation: "/prɪˈsaɪs/", definition: "exact and accurate", example: "Give precise instructions." },
+                { word: "purchase", pronunciation: "/ˈpɜːtʃəs/", definition: "to buy", example: "Purchase tickets online." },
+                { word: "receipt", pronunciation: "/rɪˈsiːt/", definition: "proof of payment", example: "Keep your receipt." },
+                { word: "recommend", pronunciation: "/ˌrekəˈmend/", definition: "to suggest", example: "I recommend this restaurant." },
+                { word: "reduce", pronunciation: "/rɪˈdjuːs/", definition: "to make smaller", example: "Reduce your expenses." },
+                { word: "register", pronunciation: "/ˈredʒɪstə/", definition: "to sign up", example: "Register for the workshop." },
+                { word: "renew", pronunciation: "/rɪˈnjuː/", definition: "to extend", example: "Renew your subscription." },
+                { word: "request", pronunciation: "/rɪˈkwest/", definition: "to ask for", example: "Request more information." },
+                { word: "require", pronunciation: "/rɪˈkwaɪə/", definition: "to need", example: "This job requires experience." }
+            ],
+            academic: [
+                { word: "abstract", pronunciation: "/ˈæbstrækt/", definition: "a summary of research", example: "Read the abstract first." },
+                { word: "acknowledge", pronunciation: "/əkˈnɒlɪdʒ/", definition: "to recognize or admit", example: "Acknowledge the contributions." },
+                { word: "analyze", pronunciation: "/ˈænəlaɪz/", definition: "to examine in detail", example: "Analyze the data carefully." },
+                { word: "approach", pronunciation: "/əˈprəʊtʃ/", definition: "a way of dealing with something", example: "Use a systematic approach." },
+                { word: "assess", pronunciation: "/əˈses/", definition: "to evaluate", example: "Assess student performance." },
+                { word: "assume", pronunciation: "/əˈsjuːm/", definition: "to suppose without proof", example: "Don't assume the results." },
+                { word: "cite", pronunciation: "/saɪt/", definition: "to quote as evidence", example: "Cite your sources properly." },
+                { word: "clarify", pronunciation: "/ˈklærɪfaɪ/", definition: "to make clear", example: "Clarify the main points." },
+                { word: "comprise", pronunciation: "/kəmˈpraɪz/", definition: "to consist of", example: "The study comprises three parts." },
+                { word: "conclude", pronunciation: "/kənˈkluːd/", definition: "to end or decide", example: "What can we conclude?" },
+                { word: "conduct", pronunciation: "/kənˈdʌkt/", definition: "to carry out", example: "Conduct an experiment." },
+                { word: "contradict", pronunciation: "/ˌkɒntrəˈdɪkt/", definition: "to oppose or deny", example: "The findings contradict the theory." },
+                { word: "contribute", pronunciation: "/kənˈtrɪbjuːt/", definition: "to give or add to", example: "Contribute to the discussion." },
+                { word: "demonstrate", pronunciation: "/ˈdemənstreɪt/", definition: "to show clearly", example: "Demonstrate your understanding." },
+                { word: "derive", pronunciation: "/dɪˈraɪv/", definition: "to obtain from a source", example: "Derive the formula." },
+                { word: "distinguish", pronunciation: "/dɪˈstɪŋɡwɪʃ/", definition: "to recognize differences", example: "Distinguish fact from opinion." },
+                { word: "emphasize", pronunciation: "/ˈemfəsaɪz/", definition: "to stress importance", example: "Emphasize key findings." },
+                { word: "evaluate", pronunciation: "/ɪˈvæljueɪt/", definition: "to judge the value", example: "Evaluate the evidence." },
+                { word: "hypothesis", pronunciation: "/haɪˈpɒθəsɪs/", definition: "a proposed explanation", example: "Test the hypothesis." },
+                { word: "identify", pronunciation: "/aɪˈdentɪfaɪ/", definition: "to recognize", example: "Identify the main issues." },
+                { word: "illustrate", pronunciation: "/ˈɪləstreɪt/", definition: "to explain with examples", example: "Illustrate your argument." },
+                { word: "imply", pronunciation: "/ɪmˈplaɪ/", definition: "to suggest indirectly", example: "What does this imply?" },
+                { word: "interpret", pronunciation: "/ɪnˈtɜːprɪt/", definition: "to explain the meaning", example: "Interpret the results." },
+                { word: "investigate", pronunciation: "/ɪnˈvestɪɡeɪt/", definition: "to research systematically", example: "Investigate the problem." },
+                { word: "methodology", pronunciation: "/ˌmeθəˈdɒlədʒi/", definition: "research methods", example: "Explain your methodology." }
+            ]
+        };
+
+        let currentCategory = 'business';
+        let currentIndex = 0;
+        let learnedWords = {};
+        let todayCount = 0;
+        let isFlipped = false;
+        let quizCorrect = 0;
+        let quizTotal = 0;
+        let currentFilter = 'all';
+        let currentCategoryFilter = 'all';
+
+        function init() {
+            Object.keys(vocabularyData).forEach(cat => {
+                learnedWords[cat] = new Array(vocabularyData[cat].length).fill(false);
+            });
+            updateStats();
+            loadWord();
+            generateWordList();
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tabName === 'wordlist') {
+                generateWordList();
+            } else if (tabName === 'stats') {
+                generateStats();
+            }
+        }
+
+        function selectCategory(category) {
+            currentCategory = category;
+            currentIndex = 0;
+            isFlipped = false;
+            
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            loadWord();
+            updateStats();
+        }
+
+        function loadWord() {
+            const words = vocabularyData[currentCategory];
+            if (words.length === 0) return;
+            
+            const word = words[currentIndex];
+            document.getElementById('wordFront').textContent = word.word;
+            document.getElementById('pronunciation').textContent = word.pronunciation;
+            document.getElementById('definition').textContent = word.definition;
+            document.getElementById('example').textContent = '"' + word.example + '"';
+            
+            document.getElementById('flashcard').classList.remove('flipped');
+            isFlipped = false;
+        }
+
+        function flipCard() {
+            const card = document.getElementById('flashcard');
+            card.classList.toggle('flipped');
+            isFlipped = !isFlipped;
+        }
+
+        function nextWord() {
+            const words = vocabularyData[currentCategory];
+            currentIndex = (currentIndex + 1) % words.length;
+            loadWord();
+        }
+
+        function previousWord() {
+            const words = vocabularyData[currentCategory];
+            currentIndex = (currentIndex - 1 + words.length) % words.length;
+            loadWord();
+        }
+
+        function shuffleWords() {
+            const words = vocabularyData[currentCategory];
+            currentIndex = Math.floor(Math.random() * words.length);
+            loadWord();
+        }
+
+        function markAsLearned() {
+            learnedWords[currentCategory][currentIndex] = true;
+            todayCount++;
+            updateStats();
+            generateWordList();
+            nextWord();
+        }
+
+        function updateStats() {
+            let total = 0;
+            let learned = 0;
+            
+            Object.keys(vocabularyData).forEach(cat => {
+                total += vocabularyData[cat].length;
+                learned += learnedWords[cat].filter(Boolean).length;
+            });
+            
+            document.getElementById('totalWords').textContent = total;
+            document.getElementById('learnedWords').textContent = learned;
+            document.getElementById('todayWords').textContent = todayCount;
+            
+            const accuracy = quizTotal > 0 ? Math.round((quizCorrect / quizTotal) * 100) : 0;
+            document.getElementById('quizScore').textContent = accuracy + '%';
+            
+            const categoryLearned = learnedWords[currentCategory].filter(Boolean).length;
+            const categoryTotal = vocabularyData[currentCategory].length;
+            const percentage = Math.round((categoryLearned / categoryTotal) * 100);
+            
+            document.getElementById('categoryProgress').style.width = percentage + '%';
+            document.getElementById('categoryProgress').textContent = percentage + '%';
+            document.getElementById('progressText').textContent = 
+                `${categoryLearned} of ${categoryTotal} words learned in this category`;
+        }
+
+        function generateWordList() {
+            const tbody = document.getElementById('wordTableBody');
+            tbody.innerHTML = '';
+            
+            Object.keys(vocabularyData).forEach(category => {
+                vocabularyData[category].forEach((word, index) => {
+                    const isLearned = learnedWords[category][index];
+                    
+                    if (currentFilter === 'learned' && !isLearned) return;
+                    if (currentFilter === 'unlearned' && isLearned) return;
+                    if (currentCategoryFilter !== 'all' && currentCategoryFilter !== category) return;
+                    
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td><strong>${word.word}</strong></td>
+                        <td>${word.pronunciation}</td>
+                        <td>${word.definition}</td>
+                        <td>${category.charAt(0).toUpperCase() + category.slice(1)}</td>
+                        <td>${isLearned ? '<span class="learned-badge">✓ Learned</span>' : ''}</td>
+                    `;
+                });
+            });
+        }
+
+        function filterWords() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const rows = document.querySelectorAll('#wordTableBody tr');
+            
+            rows.forEach(row => {
+                const word = row.cells[0].textContent.toLowerCase();
+                const definition = row.cells[2].textContent.toLowerCase();
+                if (word.includes(searchTerm) || definition.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function filterByStatus(status) {
+            currentFilter = status;
+            document.querySelectorAll('.filter-buttons .filter-btn').forEach((btn, idx) => {
+                if (idx < 3) btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            generateWordList();
+        }
+
+        function filterByCategory(category) {
+            currentCategoryFilter = category;
+            document.querySelectorAll('.filter-buttons')[1].querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            generateWordList();
+        }
+
+        function startQuiz() {
+            generateQuizQuestion();
+        }
+
+        function generateQuizQuestion() {
+            const allCategories = Object.keys(vocabularyData);
+            const randomCat = allCategories[Math.floor(Math.random() * allCategories.length)];
+            const words = vocabularyData[randomCat];
+            const randomWord = words[Math.floor(Math.random() * words.length)];
+            
+            const allWords = Object.values(vocabularyData).flat();
+            const options = [randomWord.definition];
+            
+            while (options.length < 4) {
+                const randomDef = allWords[Math.floor(Math.random() * allWords.length)].definition;
+                if (!options.includes(randomDef)) {
+                    options.push(randomDef);
+                }
+            }
+            
+            options.sort(() => Math.random() - 0.5);
+            
+            let quizHTML = `
+                <div class="quiz-question">What does "<strong>${randomWord.word}</strong>" mean?</div>
+            `;
+            
+            options.forEach((option, index) => {
+                quizHTML += `
+                    <div class="quiz-option" onclick="checkQuizAnswer(this, '${randomWord.definition.replace(/'/g, "\\'")}', '${option.replace(/'/g, "\\'")}')">
+                        ${String.fromCharCode(65 + index)}. ${option}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('quizContent').innerHTML = quizHTML;
+        }
+
+        function checkQuizAnswer(element, correct, selected) {
+            quizTotal++;
+            const allOptions = document.querySelectorAll('.quiz-option');
+            allOptions.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt.textContent.substring(3) === correct) {
+                    opt.classList.add('correct');
+                }
+            });
+            
+            if (selected === correct) {
+                element.classList.add('correct');
+                quizCorrect++;
+            } else {
+                element.classList.add('incorrect');
+            }
+            
+            updateStats();
+            document.getElementById('quizScoreDisplay').textContent = `Score: ${quizCorrect}/${quizTotal} (${Math.round((quizCorrect/quizTotal)*100)}%)`;
+            
+            setTimeout(generateQuizQuestion, 2000);
+        }
+
+        function generateStats() {
+            const statsContent = document.getElementById('statsContent');
+            
+            let total = 0;
+            let learned = 0;
+            let statsHTML = '<div style="padding: 20px;">';
+            
+            statsHTML += '<h3 style="color: #667eea; margin-bottom: 20px;">Category Breakdown</h3>';
+            
+            Object.keys(vocabularyData).forEach(cat => {
+                const catTotal = vocabularyData[cat].length;
+                const catLearned = learnedWords[cat].filter(Boolean).length;
+                const percentage = Math.round((catLearned / catTotal) * 100);
+                
+                total += catTotal;
+                learned += catLearned;
+                
+                const categoryNames = {
+                    'business': '💼 Business & Office',
+                    'finance': '💰 Finance & Banking',
+                    'travel': '✈️ Travel & Transportation',
+                    'technology': '💻 Technology & IT',
+                    'marketing': '📊 Marketing & Sales',
+                    'management': '👔 Management & HR',
+                    'daily': '🏠 Daily Life',
+                    'academic': '🎓 Academic & Research'
+                };
+                
+                statsHTML += `
+                    <div style="margin: 20px 0;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <strong>${categoryNames[cat]}</strong>
+                            <span>${catLearned}/${catTotal} (${percentage}%)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${percentage}%">${percentage}%</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            const overallPercentage = Math.round((learned / total) * 100);
+            
+            statsHTML += `
+                <h3 style="color: #667eea; margin: 40px 0 20px 0;">Overall Progress</h3>
+                <div style="text-align: center; padding: 30px; background: #f8f9fa; border-radius: 15px;">
+                    <div style="font-size: 4em; color: #667eea; font-weight: bold;">${overallPercentage}%</div>
+                    <div style="font-size: 1.5em; color: #666; margin-top: 10px;">
+                        ${learned} out of ${total} words learned
+                    </div>
+                </div>
+                
+                <h3 style="color: #667eea; margin: 40px 0 20px 0;">Quiz Performance</h3>
+                <div style="text-align: center; padding: 30px; background: #f8f9fa; border-radius: 15px;">
+                    <div style="font-size: 3em; color: #667eea; font-weight: bold;">
+                        ${quizTotal > 0 ? Math.round((quizCorrect/quizTotal)*100) : 0}%
+                    </div>
+                    <div style="font-size: 1.2em; color: #666; margin-top: 10px;">
+                        ${quizCorrect} correct out of ${quizTotal} questions
+                    </div>
+                </div>
+                
+                <h3 style="color: #667eea; margin: 40px 0 20px 0;">Study Tips</h3>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 15px; border-left: 4px solid #667eea;">
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin: 10px 0;">✓ Study 20-30 words per day for best retention</li>
+                        <li style="margin: 10px 0;">✓ Review learned words weekly to maintain memory</li>
+                        <li style="margin: 10px 0;">✓ Use the quiz feature to test your knowledge</li>
+                        <li style="margin: 10px 0;">✓ Focus on example sentences to understand context</li>
+                        <li style="margin: 10px 0;">✓ Practice pronunciation out loud</li>
+                    </ul>
+                </div>
+            `;
+            
+            statsHTML += '</div>';
+            statsContent.innerHTML = statsHTML;
+        }
+
+        // Initialize on page load
+        init();
+    </script>
+</body>
+</html>
