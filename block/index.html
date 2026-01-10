@@ -1,22 +1,379 @@
 <!doctype html>
 <html lang="ja">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>blockgame02</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .wrap {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 540px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #667eea;
+      margin-bottom: 20px;
+      font-size: 28px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    #c {
+      display: block;
+      border: 3px solid #667eea;
+      border-radius: 10px;
+      background: #f8f9fa;
+      margin: 0 auto;
+    }
+
+    .info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      gap: 10px;
+    }
+
+    .info span {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    #score {
+      color: #667eea;
+      font-size: 24px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+      text-transform: uppercase;
+    }
+
+    #start {
+      background: #667eea;
+      color: white;
+    }
+
+    #start:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    #reset {
+      background: #e74c3c;
+      color: white;
+    }
+
+    #reset:hover {
+      background: #c0392b;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+    }
+
+    .hint {
+      text-align: center;
+      margin-top: 15px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
 </head>
+
 <body>
   <div class="wrap">
-    <h1>blockgame02  </h1>
+    <h1>ブロック崩し</h1>
     <canvas id="c" width="480" height="320"></canvas>
     <div class="info">
       <span>スコア: <span id="score">0</span></span>
-      <button id="start">スタート</button>
-      <button id="reset">リセット</button>
+      <div>
+        <button id="start">スタート</button>
+        <button id="reset">リセット</button>
+      </div>
     </div>
     <p class="hint">マウスでパドル移動 / ← → キーでも操作</p>
   </div>
-  <script src="game.js"></script>
+
+  <script>
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const startBtn = document.getElementById('start');
+    const resetBtn = document.getElementById('reset');
+
+    let score = 0;
+    let gameRunning = false;
+    let animationId = null;
+
+    // パドル
+    const paddle = {
+      x: canvas.width / 2 - 40,
+      y: canvas.height - 30,
+      width: 80,
+      height: 10,
+      speed: 7,
+      dx: 0
+    };
+
+    // ボール
+    const ball = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      radius: 6,
+      dx: 3,
+      dy: -3,
+      speed: 3
+    };
+
+    // ブロック設定
+    const brickRows = 5;
+    const brickCols = 8;
+    const brickWidth = 55;
+    const brickHeight = 20;
+    const brickPadding = 5;
+    const brickOffsetTop = 40;
+    const brickOffsetLeft = 10;
+
+    let bricks = [];
+
+    // ブロック初期化
+    function initBricks() {
+      bricks = [];
+      const colors = ['#e74c3c', '#e67e22', '#f39c12', '#27ae60', '#3498db'];
+      for (let row = 0; row < brickRows; row++) {
+        bricks[row] = [];
+        for (let col = 0; col < brickCols; col++) {
+          bricks[row][col] = {
+            x: brickOffsetLeft + col * (brickWidth + brickPadding),
+            y: brickOffsetTop + row * (brickHeight + brickPadding),
+            status: 1,
+            color: colors[row]
+          };
+        }
+      }
+    }
+
+    // パドル描画
+    function drawPaddle() {
+      ctx.fillStyle = '#667eea';
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#667eea';
+      ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+      ctx.shadowBlur = 0;
+    }
+
+    // ボール描画
+    function drawBall() {
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+      ctx.fillStyle = '#e74c3c';
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#e74c3c';
+      ctx.fill();
+      ctx.closePath();
+      ctx.shadowBlur = 0;
+    }
+
+    // ブロック描画
+    function drawBricks() {
+      for (let row = 0; row < brickRows; row++) {
+        for (let col = 0; col < brickCols; col++) {
+          const brick = bricks[row][col];
+          if (brick.status === 1) {
+            ctx.fillStyle = brick.color;
+            ctx.fillRect(brick.x, brick.y, brickWidth, brickHeight);
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(brick.x, brick.y, brickWidth, brickHeight);
+          }
+        }
+      }
+    }
+
+    // パドル移動
+    function movePaddle() {
+      paddle.x += paddle.dx;
+      if (paddle.x < 0) paddle.x = 0;
+      if (paddle.x + paddle.width > canvas.width) {
+        paddle.x = canvas.width - paddle.width;
+      }
+    }
+
+    // ボール移動
+    function moveBall() {
+      ball.x += ball.dx;
+      ball.y += ball.dy;
+
+      // 壁との衝突
+      if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
+        ball.dx *= -1;
+      }
+      if (ball.y - ball.radius < 0) {
+        ball.dy *= -1;
+      }
+
+      // パドルとの衝突
+      if (
+        ball.y + ball.radius > paddle.y &&
+        ball.x > paddle.x &&
+        ball.x < paddle.x + paddle.width
+      ) {
+        ball.dy *= -1;
+        // パドルのどこに当たったかで角度を変える
+        const hitPos = (ball.x - paddle.x) / paddle.width;
+        ball.dx = (hitPos - 0.5) * 8;
+      }
+
+      // ブロックとの衝突
+      for (let row = 0; row < brickRows; row++) {
+        for (let col = 0; col < brickCols; col++) {
+          const brick = bricks[row][col];
+          if (brick.status === 1) {
+            if (
+              ball.x > brick.x &&
+              ball.x < brick.x + brickWidth &&
+              ball.y > brick.y &&
+              ball.y < brick.y + brickHeight
+            ) {
+              ball.dy *= -1;
+              brick.status = 0;
+              score += 10;
+              scoreEl.textContent = score;
+            }
+          }
+        }
+      }
+
+      // ゲームオーバー
+      if (ball.y + ball.radius > canvas.height) {
+        gameRunning = false;
+        alert('ゲームオーバー！スコア: ' + score);
+        resetGame();
+      }
+
+      // クリア判定
+      if (bricks.every(row => row.every(brick => brick.status === 0))) {
+        gameRunning = false;
+        alert('クリア！スコア: ' + score);
+        resetGame();
+      }
+    }
+
+    // 描画
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBricks();
+      drawPaddle();
+      drawBall();
+    }
+
+    // ゲームループ
+    function gameLoop() {
+      if (!gameRunning) return;
+
+      movePaddle();
+      moveBall();
+      draw();
+
+      animationId = requestAnimationFrame(gameLoop);
+    }
+
+    // ゲーム開始
+    function startGame() {
+      if (gameRunning) return;
+      gameRunning = true;
+      gameLoop();
+    }
+
+    // ゲームリセット
+    function resetGame() {
+      gameRunning = false;
+      if (animationId) cancelAnimationFrame(animationId);
+
+      score = 0;
+      scoreEl.textContent = score;
+
+      paddle.x = canvas.width / 2 - 40;
+      paddle.dx = 0;
+
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      ball.dx = 3;
+      ball.dy = -3;
+
+      initBricks();
+      draw();
+    }
+
+    // キーボード操作
+    let keys = {};
+
+    document.addEventListener('keydown', (e) => {
+      keys[e.key] = true;
+
+      if (keys['ArrowLeft']) {
+        paddle.dx = -paddle.speed;
+      } else if (keys['ArrowRight']) {
+        paddle.dx = paddle.speed;
+      }
+    });
+
+    document.addEventListener('keyup', (e) => {
+      keys[e.key] = false;
+
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        paddle.dx = 0;
+      }
+    });
+
+    // マウス操作
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      paddle.x = mouseX - paddle.width / 2;
+
+      if (paddle.x < 0) paddle.x = 0;
+      if (paddle.x + paddle.width > canvas.width) {
+        paddle.x = canvas.width - paddle.width;
+      }
+    });
+
+    // ボタンイベント
+    startBtn.addEventListener('click', startGame);
+    resetBtn.addEventListener('click', resetGame);
+
+    // 初期化
+    initBricks();
+    draw();
+  </script>
 </body>
+
 </html>
