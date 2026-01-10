@@ -21,14 +21,6 @@
       padding: 20px;
     }
 
-    .wrap {
-      background: white;
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      max-width: 540px;
-    }
-
     h1 {
       text-align: center;
       color: #667eea;
@@ -109,7 +101,7 @@
 
 <body>
   <div class="wrap">
-    <h1>ブロック崩し(2026年1個目)</h1>
+    <h1>2026年1個目のブロック崩し</h1>
     <canvas id="c" width="480" height="320"></canvas>
     <div class="info">
       <span>スコア: <span id="score">0</span></span>
@@ -155,11 +147,15 @@
     // ブロック設定
     const brickRows = 5;
     const brickCols = 8;
-    const brickWidth = 55;
-    const brickHeight = 20;
     const brickPadding = 5;
     const brickOffsetTop = 40;
     const brickOffsetLeft = 10;
+
+    // ここでブロック幅をキャンバス幅に合わせて動的に計算（右端がはみ出さないように）
+    let brickWidth = Math.floor(
+      (canvas.width - brickOffsetLeft * 2 - (brickCols - 1) * brickPadding) / brickCols
+    );
+    const brickHeight = 20;
 
     let bricks = [];
 
@@ -327,6 +323,11 @@
       ball.y = canvas.height / 2;
       ball.dx = 3;
       ball.dy = -3;
+
+      // （念のため）キャンバス幅が変わっていたらブロック幅を再計算
+      brickWidth = Math.floor(
+        (canvas.width - brickOffsetLeft * 2 - (brickCols - 1) * brickPadding) / brickCols
+      );
 
       initBricks();
       draw();

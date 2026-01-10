@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ブロック崩し</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      text-align: center;
+    }
+    
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+    
+    #c {
+      display: block;
+      border: 2px solid #333;
+      background: #1a1a2e;
+      margin: 0 auto 20px;
+    }
+    
+    .info {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+    
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 0 5px;
+      border: 2px solid #333;
+      background: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    
+    button:hover {
+      background: #333;
+      color: white;
+    }
+    
+    .hint {
+      margin-top: 15px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>2026年2個目のブロック崩し</h1>
+    <canvas id="c" width="560" height="500"></canvas>
+    
+    <div class="info">
+      <span>スコア: <span id="score">0</span></span>
+      <span>レベル: <span id="level">1</span></span>
+    </div>
+    
+    <div>
+      <button id="start">スタート</button>
+      <button id="reset">リセット</button>
+    </div>
+    
+    <p class="hint">マウスでパドル移動 / ← → キーでも操作 / ライフは1回のみ</p>
+  </div>
+  
+  <script>
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const levelEl = document.getElementById('level');
+    const startBtn = document.getElementById('start');
+    const resetBtn = document.getElementById('reset');
+
+    let score = 0;
+    let level = 1;
+    let gameRunning = false;
+    let animationId = null;
+
+    const paddle = {
+      x: canvas.width / 2 - 50,
+      y: canvas.height - 40,
+      width: 100,
+      height: 12,
+      speed: 8,
+      dx: 0
+    };
+
+    const ball = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      radius: 6,
+      dx: 4,
+      dy: -4,
+      trail: []
+    };
+
+    let particles = [];
+
+    const brickRows = 10;
+    const brickCols = 12;
+    let brickWidth = 44; // 初期値（実際は計算で上書き）
+    const brickHeight = 18;
+    const brickPadding = 3;
+    const brickOffsetTop = 40;
+    const brickOffsetLeft = 8;
+
+    let bricks = [];
+
+    // キャンバス幅に合わせてブロック幅を計算（右端がはみ出ないように）
+    function recalcBrickWidth() {
+      const availableWidth = canvas.width - brickOffsetLeft * 2 - (brickCols - 1) * brickPadding;
+      brickWidth = Math.floor(availableWidth / brickCols);
+      if (brickWidth < 8) brickWidth = 8; // 極端に小さくならないよう最低値
+    }
+
+    function initBricks() {
+      recalcBrickWidth();
+      bricks = [];
+      const colors = [
+        '#e74c3c', '#e67e22', '#f39c12', '#f1c40f', '#2ecc71', 
+        '#1abc9c', '#3498db', '#2980b9', '#9b59b6', '#8e44ad'
+      ];
+      
+      for (let row = 0; row < brickRows; row++) {
+        bricks[row] = [];
+        for (let col = 0; col < brickCols; col++) {
+          const health = Math.min(Math.floor(row / 2) + 1 + Math.floor((level - 1) / 2), 5);
+          bricks[row][col] = {
+            x: brickOffsetLeft + col * (brickWidth + brickPadding),
+            y: brickOffsetTop + row * (brickHeight + brickPadding),
+            status: 1,
+            health: health,
+            maxHealth: health,
+            color: colors[row % colors.length]
+          };
+        }
+      }
+    }
+
+    function drawPaddle() {
+      ctx.fillStyle = '#667eea';
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = '#667eea';
+      ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+      ctx.shadowBlur = 0;
+    }
+
+    function drawBall() {
+      ball.trail.push({ x: ball.x, y: ball.y });
+      if (ball.trail.length > 10) ball.trail.shift();
+      
+      ball.trail.forEach((pos, i) => {
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, ball.radius * (i / ball.trail.length), 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(231, 76, 60, ${i / ball.trail.length * 0.5})`;
+        ctx.fill();
+        ctx.closePath();
+      });
+      
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+      ctx.fillStyle = '#e74c3c';
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#e74c3c';
+      ctx.fill();
+      ctx.closePath();
+      ctx.shadowBlur = 0;
+    }
+
+    function drawBricks() {
+      for (let row = 0; row < brickRows; row++) {
+        for (let col = 0; col < brickCols; col++) {
+          const brick = bricks[row][col];
+          if (brick.status === 1) {
+            const alpha = brick.health / brick.maxHealth;
+            
+            ctx.fillStyle = brick.color;
+            ctx.globalAlpha = 0.5 + alpha * 0.5;
+            ctx.fillRect(brick.x, brick.y, brickWidth, brickHeight);
+            ctx.globalAlpha = 1;
+            
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(brick.x, brick.y, brickWidth, brickHeight);
+            
+            if (brick.health > 1) {
+              ctx.fillStyle = '#fff';
+              ctx.font = 'bold 11px Arial';
+              ctx.textAlign = 'center';
+              ctx.shadowBlur = 3;
+              ctx.shadowColor = '#000';
+              ctx.fillText(brick.health, brick.x + brickWidth / 2, brick.y + brickHeight / 2 + 4);
+              ctx.shadowBlur = 0;
+            }
+          }
+        }
+      }
+    }
+
+    function drawParticles() {
+      particles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.life;
+        ctx.fillRect(p.x, p.y, 3, 3);
+        ctx.globalAlpha = 1;
+      });
+    }
+
+    function createParticles(x, y, color, count = 15) {
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 8,
+          vy: (Math.random() - 0.5) * 8,
+          color: color,
+          life: 1
+        });
+      }
+    }
+
+    function movePaddle() {
+      paddle.x += paddle.dx;
+      if (paddle.x < 0) paddle.x = 0;
+      if (paddle.x + paddle.width > canvas.width) {
+        paddle.x = canvas.width - paddle.width;
+      }
+    }
+
+    function moveBall() {
+      ball.x += ball.dx;
+      ball.y += ball.dy;
+
+      if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
+        ball.dx *= -1;
+      }
+      if (ball.y - ball.radius < 0) {
+        ball.dy *= -1;
+      }
+
+      if (
+        ball.y + ball.radius > paddle.y &&
+        ball.y - ball.radius < paddle.y + paddle.height &&
+        ball.x > paddle.x &&
+        ball.x < paddle.x + paddle.width
+      ) {
+        ball.dy = -Math.abs(ball.dy);
+        const hitPos = (ball.x - paddle.x) / paddle.width;
+        ball.dx = (hitPos - 0.5) * 10;
+        
+        if (Math.abs(hitPos - 0.5) < 0.2) {
+          score += 5;
+          scoreEl.textContent = score;
+        }
+      }
+
+      for (let row = 0; row < brickRows; row++) {
+        for (let col = 0; col < brickCols; col++) {
+          const brick = bricks[row][col];
+          if (brick.status === 1) {
+            if (
+              ball.x + ball.radius > brick.x &&
+              ball.x - ball.radius < brick.x + brickWidth &&
+              ball.y + ball.radius > brick.y &&
+              ball.y - ball.radius < brick.y + brickHeight
+            ) {
+              // 衝突方向の簡易判定
+              const overlapLeft = ball.x - (brick.x);
+              const overlapRight = (brick.x + brickWidth) - ball.x;
+              const overlapTop = ball.y - (brick.y);
+              const overlapBottom = (brick.y + brickHeight) - ball.y;
+              
+              // 最小の重なりに応じて反射を切り替え
+              const minOverlap = Math.min(Math.abs(overlapLeft), Math.abs(overlapRight), Math.abs(overlapTop), Math.abs(overlapBottom));
+              if (minOverlap === Math.abs(overlapLeft) || minOverlap === Math.abs(overlapRight)) {
+                ball.dx *= -1;
+              } else {
+                ball.dy *= -1;
+              }
+              
+              brick.health--;
+              
+              if (brick.health <= 0) {
+                brick.status = 0;
+                score += 10 * level * brick.maxHealth;
+                scoreEl.textContent = score;
+                createParticles(brick.x + brickWidth / 2, brick.y + brickHeight / 2, brick.color);
+              } else {
+                createParticles(brick.x + brickWidth / 2, brick.y + brickHeight / 2, brick.color, 5);
+              }
+              
+              return;
+            }
+          }
+        }
+      }
+
+      if (ball.y + ball.radius > canvas.height) {
+        gameRunning = false;
+        setTimeout(() => {
+          alert('ゲームオーバー！\nスコア: ' + score + '\nレベル: ' + level);
+        }, 100);
+      }
+    }
+
+    function updateParticles() {
+      particles = particles.filter(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.2;
+        p.life -= 0.02;
+        return p.life > 0;
+      });
+    }
+
+    function draw() {
+      ctx.fillStyle = '#1a1a2e';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      drawBricks();
+      drawParticles();
+      drawPaddle();
+      drawBall();
+    }
+
+    function gameLoop() {
+      if (!gameRunning) return;
+      
+      movePaddle();
+      moveBall();
+      updateParticles();
+      draw();
+      
+      if (bricks.every(row => row.every(brick => brick.status === 0))) {
+        level++;
+        levelEl.textContent = level;
+        
+        ball.x = canvas.width / 2;
+        ball.y = canvas.height / 2;
+        ball.dx = 4 + (level - 1) * 0.3;
+        ball.dy = -4 - (level - 1) * 0.3;
+        ball.trail = [];
+        
+        initBricks();
+      }
+      
+      animationId = requestAnimationFrame(gameLoop);
+    }
+
+    function startGame() {
+      if (gameRunning) return;
+      gameRunning = true;
+      gameLoop();
+    }
+
+    function resetGame() {
+      gameRunning = false;
+      if (animationId) cancelAnimationFrame(animationId);
+      
+      score = 0;
+      level = 1;
+      scoreEl.textContent = score;
+      levelEl.textContent = level;
+      
+      paddle.x = canvas.width / 2 - 50;
+      paddle.dx = 0;
+      
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      ball.dx = 4;
+      ball.dy = -4;
+      ball.trail = [];
+      
+      particles = [];
+      
+      initBricks();
+      draw();
+    }
+
+    let keys = {};
+    
+    document.addEventListener('keydown', (e) => {
+      if (!gameRunning) return;
+      
+      keys[e.key] = true;
+      
+      if (keys['ArrowLeft']) {
+        paddle.dx = -paddle.speed;
+      } else if (keys['ArrowRight']) {
+        paddle.dx = paddle.speed;
+      }
+    });
+
+    document.addEventListener('keyup', (e) => {
+      keys[e.key] = false;
+      
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        paddle.dx = 0;
+      }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      paddle.x = mouseX - paddle.width / 2;
+      
+      if (paddle.x < 0) paddle.x = 0;
+      if (paddle.x + paddle.width > canvas.width) {
+        paddle.x = canvas.width - paddle.width;
+      }
+    });
+
+    startBtn.addEventListener('click', startGame);
+    resetBtn.addEventListener('click', resetGame);
+
+    // 初期化
+    initBricks();
+    draw();
+
+    //（任意）ウィンドウリサイズでキャンバス幅を変化させる場合に備え、リサイズ時にブロック幅を再計算して再描画
+    window.addEventListener('resize', () => {
+      // canvas.width/height を動的に変えている場合はここで再設定しても良い
+      recalcBrickWidth();
+      // ブロックの位置を再配置
+      for (let row = 0; row < brickRows; row++) {
+        for (let col = 0; col < brickCols; col++) {
+          const brick = bricks[row][col];
+          if (brick) {
+            brick.x = brickOffsetLeft + col * (brickWidth + brickPadding);
+            brick.y = brickOffsetTop + row * (brickHeight + brickPadding);
+          }
+        }
+      }
+      draw();
+    });
+  </script>
+</body>
+</html>
